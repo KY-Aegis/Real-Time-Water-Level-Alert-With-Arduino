@@ -32,30 +32,30 @@ def send_mail(low):                                         # function to send e
     print("Email has been sent to "+rec_email)              # print a text to validate that email has been sent successfully
 
 
-ports = serial.tools.list_ports.comports()
-serialInst = serial.Serial()
-serialInst.baudrate = 9600
-serialInst.port = "COM9"
-serialInst.open()
-while True:
-    databaseCursor.execute("SELECT * FROM sensor.sensordata order by timestamp desc limit 1")
-    queryResult = databaseCursor.fetchall()
-    if serialInst.in_waiting:
-        packet = serialInst.readline()
-        reading=packet.decode('utf')
-        print(reading)
-        if int(reading) > upperLimit:
-            status = "High"
-        elif lowerLimit > int(reading):
-            status = "Low"
-    if queryResult[0][2] != status and status != "" and queryResult[0][1] != reading and queryResult[0][0] != datetime.now().strftime("%Y-%m-%d %H:%M:%S") :
-        sql = "INSERT INTO sensordata (TimeStamp, Value, Status) VALUES (%s, %s, %s)"
-        val = (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), reading, status)
-        databaseCursor.execute(sql, val)
-        database.commit()
-        print(databaseCursor.rowcount, "record inserted.")
-        if status == "Low":
-            send_mail(reading)
+ports = serial.tools.list_ports.comports()  # get the list of ports
+serialInst = serial.Serial()                # initialize the serial port
+serialInst.baudrate = 9600                  # specify the max bits per second to 9600bits
+serialInst.port = "COM9"                    # specify the port used
+serialInst.open()                           # open the serial port
+while True:                                 # while the arduino is connected to the com port
+    databaseCursor.execute("SELECT * FROM sensor.sensordata order by timestamp desc limit 1")   # query the last value from the sql database
+    queryResult = databaseCursor.fetchall()                                                     # assign the value fetched to an array
+    if serialInst.in_waiting:                                                                   # if the compiler is waiting for the data
+        packet = serialInst.readline()                                                          # read the current value from the serial port
+        reading=packet.decode('utf')                                                            # decode the value
+        print(reading)                                                                          # print the value
+        if int(reading) > upperLimit:                                                           # if the value is above the upper limit
+            status = "High"                                                                     # set the status to high
+        elif lowerLimit > int(reading):                                                         # if the status is below the lower limit
+            status = "Low"                                                                      # set the status to low
+    if queryResult[0][2] != status and status != "" and queryResult[0][1] != reading and queryResult[0][0] != datetime.now().strftime("%Y-%m-%d %H:%M:%S"): # if the status from the sql different from the status collected from the serial port, status is not an empty string and the value and timestamp of the sql data and serial port is different
+        sql = "INSERT INTO sensordata (TimeStamp, Value, Status) VALUES (%s, %s, %s)"   # construct the insert statement to be inserted into the sql database
+        val = (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), reading, status)           # get the current timestamp, reading and status from the serial port
+        databaseCursor.execute(sql, val)                                                # insert the data into the sql database
+        database.commit()                                                               # commit the statement
+        print(databaseCursor.rowcount, "record inserted.")                              # print record inserted to indicate a successful insert into statement
+        if status == "Low":                                                             # if the status is low
+            send_mail(reading)                                                          # send an email to the user to alert them to refil the tank
 
 
 
