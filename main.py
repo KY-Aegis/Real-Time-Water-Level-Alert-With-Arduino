@@ -18,8 +18,8 @@ database = mysql.connector.connect( # initialize the sql connector
 databaseCursor = database.cursor()  # assign databaseCursor as the sql cursor
 
 def send_mail(low):                                         # function to send email when the water level is low
-    sender_email = "kheeyaw2912@gmail.com"                  # specify the sender's email
-    rec_email = "Lingkheeyaw@gmail.com"                     # specify the receiver's email
+    sender_email = "sender@gmail.com"                  # specify the sender's email
+    rec_email = "receiver@gmail.com"                     # specify the receiver's email
     password = getpass.getpass("Enter your password : ")    # prompt user to enter the password
     subject = "Abnormal Water Level Detected"               # subject of the email
     text = "The current water level threshold is LOW at {}. Please refill immediately".format(str(low)) # body of the email
