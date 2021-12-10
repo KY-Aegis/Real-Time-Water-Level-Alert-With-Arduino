@@ -21,13 +21,19 @@ The code will continuously read the value of the water sensor and change the out
 will be low, lowerlimit to upperlimit will be normal, and more than upperlimit will be full. The LED will light up according to the values as well where RED will
 be displayed when the water level is empty or low, yellow for normal and green for high. 
 
+# Sample Output when the Water Level is Low
+<img src="Images/4.jpeg" height="200" width="300">
+
+# Sample Output when the Water Level is Normal
+<img src="Images/5.jpeg" height="200" width="300">
+
 # Explanation of the Python Code
 The code will continuously read the value of the water sensor from the serial port and will insert a new row into the sql database if there is a change in the status
 of the water level. If the water level changes from normal or high to low, an email will be triggered to a recipient to notify them that the current water level 
 threshold is low. An input for the password to the sender's email will be prompted before the alert is being triggered. 
 
 # Sample of Trigger for Alert
-<img src="Images/4.PNG" height="100" width="300">
+<img src="Images/3.PNG" height="100" width="300">
 
 # Sample Email Output
 <img src="Images/6.PNG" height="200" width="500">
